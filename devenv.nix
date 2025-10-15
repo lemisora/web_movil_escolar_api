@@ -31,6 +31,21 @@
   # https://devenv.sh/services/
   # services.postgres.enable = true;
 
+  services.mysql = {
+    enable = true;
+    initialDatabases = [
+      { name = "web_movil_escolar_db"; }
+    ];
+    ensureUsers = [
+      {
+        name = "lemi";
+        ensurePermissions = {
+          "web_movil_escolar_db.*" = "ALL PRIVILEGES";
+        };
+      }
+    ];
+  };
+  
   enterShell = ''
     # Añade la carpeta de binarios local a tu PATH
     export PATH="$PWD/node_modules/.bin:$PATH"
@@ -63,9 +78,9 @@
       description = "Instala Django";
     };
 
-    tailwindcss-serve.exec = ''
-      tailwindcss -i ./assets/css/input.css -o ./src/static/css/output.css --watch
-    '';
+    # tailwindcss-serve.exec = ''
+    #   tailwindcss -i ./assets/css/input.css -o ./src/static/css/output.css --watch
+    # '';
   };
 
   processes = {
