@@ -102,8 +102,24 @@ class UserRegistrationView(generics.CreateAPIView):
                     {"profesor_created_id": profesor.id},
                     status=status.HTTP_201_CREATED,
                 )
+                
+            elif role == "alumno":
+                alumno = Alumnos.objects.create(
+                    user=user,
+                    clave_alumno=request.data.get("clave_alumno"),
+                    telefono=request.data.get("telefono"),
+                    rfc=request.data.get("rfc", "").upper(),
+                    birthdate=request.data.get("birthdate"),
+                    edad=request.data.get("edad"),
+                    ocupacion=request.data.get("ocupacion"),
+                )
+                alumno.save()
+                return Response(
+                    {"alumno_created_id": alumno.id},
+                    status=status.HTTP_201_CREATED,
+                )
 
-            # In case the role is not 'admin' or 'profesor'
+            # In case the role is not 'admin', 'alumno' or 'profesor'
             return Response(
                 {"message": "Invalid role specified."},
                 status=status.HTTP_400_BAD_REQUEST,
