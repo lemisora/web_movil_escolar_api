@@ -10,13 +10,13 @@ from web_movil_escolar_api.views import auth
 # from sistema_escolar_api.views import maestros
 
 urlpatterns = [
-    #Create Admin
-        path('admin/', users.AdminView.as_view()),
-    #Admin Data
-        path('lista-admins/', users.AdminAll.as_view()),
-    #Edit Admin
-        #path('admins-edit/', users.AdminsViewEdit.as_view())
-]
+    # Create Admin
+    path("register/", users.UserRegistrationView.as_view()),
+    # Admin Data
+    path("lista-admins/", users.UserProfileView.as_view()),
+    # Edit Admin
+    # path('admins-edit/', users.AdminsViewEdit.as_view())
+   ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
