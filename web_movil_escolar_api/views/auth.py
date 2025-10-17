@@ -23,7 +23,7 @@ class CustomAuthToken(ObtainAuthToken):
 
             profile = None
             profile_data = {}
-            if "admin" in role_names:
+            if "administrador" in role_names:
                 profile = Administradores.objects.filter(user=user).first()
                 if profile:
                     profile_data = AdminSerializer(profile).data

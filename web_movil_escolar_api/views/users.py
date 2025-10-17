@@ -17,7 +17,7 @@ class UserProfileView(generics.GenericAPIView):
         user = request.user
         profile = None
         profile_data = {}
-        if user.groups.filter(name="admin").exists():
+        if user.groups.filter(name="administrador").exists():
             profile = Administradores.objects.filter(user=user).first()
             if profile:
                 profile_data = AdminSerializer(profile).data
@@ -69,7 +69,7 @@ class UserRegistrationView(generics.CreateAPIView):
             user.groups.add(group)
             user.save()
 
-            if role == "admin":
+            if role == "administrador":
                 admin = Administradores.objects.create(
                     user=user,
                     clave_admin=request.data.get("clave_admin"),
