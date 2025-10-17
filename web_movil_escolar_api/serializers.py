@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import *
 
+
 class UserSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     first_name = serializers.CharField(required=True)
@@ -10,12 +11,23 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id','first_name','last_name', 'email')
+        fields = ("id", "first_name", "last_name", "email")
+
 
 class AdminSerializer(serializers.ModelSerializer):
-    user=UserSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Administradores
-        fields = '__all__'
-        
-# TODO:Declaras los serializadores para los perfiles de alumnos y maestros
+        fields = "__all__"
+
+
+class ProfesorSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Profesores
+        fields = "__all__"
+
+
+# TODO:Declaras los serializadores para los perfiles de alumnos
