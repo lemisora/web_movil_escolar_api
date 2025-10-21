@@ -45,7 +45,7 @@
       }
     ];
   };
-  
+
   enterShell = ''
     # Añade la carpeta de binarios local a tu PATH
     export PATH="$PWD/node_modules/.bin:$PATH"
@@ -78,6 +78,7 @@
       description = "Instala Django";
     };
 
+
     # tailwindcss-serve.exec = ''
     #   tailwindcss -i ./assets/css/input.css -o ./src/static/css/output.css --watch
     # '';
@@ -86,8 +87,7 @@
   processes = {
     "server".exec = ''
       conda-shell -c "
-        conda activate django-env
-        cd src
+        conda activate django-backend
         python manage.py runserver
       "
     '';
