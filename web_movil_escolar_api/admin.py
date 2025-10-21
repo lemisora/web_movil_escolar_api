@@ -3,7 +3,7 @@ from django.utils.html import format_html
 from web_movil_escolar_api.models import *
 
 
-@admin.register(Administradores, Profesores)
+@admin.register(Administradores, Profesores, Alumnos)
 class ProfilesAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "creation", "update")
     search_fields = (
