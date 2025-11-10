@@ -30,7 +30,7 @@ class CustomAuthToken(ObtainAuthToken):
             #Esta función genera la clave dinámica (token) para iniciar sesión
             token, created = Token.objects.get_or_create(user=user)
             
-           #Verificar que tipo de usuario quiere iniciar sesión
+            #Verificar que tipo de usuario quiere iniciar sesión
             
             if role_names == 'alumno':
                 alumno = Alumnos.objects.filter(user=user).first()
@@ -53,7 +53,7 @@ class CustomAuthToken(ObtainAuthToken):
                 return Response({"details":"Forbidden"},403)
                 pass
             
-        return Response({}, status=status.HTTP_403_FORBIDDEN) 
+        return Response({}, status=status.HTTP_403_FORBIDDEN)
 
 
 class Logout(generics.GenericAPIView):
