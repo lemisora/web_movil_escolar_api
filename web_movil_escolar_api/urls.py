@@ -22,6 +22,10 @@ urlpatterns = [
     path("register/admin/", users.AdminView.as_view()),
     path("register/profesor/", profesores.ProfesoresView.as_view()),
     path("register/alumno/", alumnos.AlumnosView.as_view()),
+    # Login
+    path("login/", auth.CustomAuthToken.as_view()),
+    # Logout
+    path("logout/", auth.Logout.as_view()),
     # Profile Data
     # path("profile/admin/", users.AdminProfileView.as_view()),
     # path("profile/profesor/", users.ProfesorProfileView.as_view()),
