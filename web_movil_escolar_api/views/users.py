@@ -17,7 +17,6 @@ from web_movil_escolar_api.serializers import (
 
 
 class AdminAll(generics.CreateAPIView):
-    #Esta función es esencial para todo donde se requiera autorización de inicio de sesión (token)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
