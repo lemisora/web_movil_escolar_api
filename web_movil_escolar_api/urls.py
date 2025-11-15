@@ -1,24 +1,41 @@
-from django.contrib import admin
-from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
+
+from web_movil_escolar_api.views import (
+    alumnos,
+    auth,
+    bootstrap,
+    profesores,
+    users,
+)
+
 from .views.bootstrap import VersionView
-from web_movil_escolar_api.views import bootstrap
-from web_movil_escolar_api.views import users
-from web_movil_escolar_api.views import auth
+
 # from sistema_escolar_api.views import alumnos
 # from sistema_escolar_api.views import maestros
 
 urlpatterns = [
     # Create Admin
     # Endpoints de registro por rol
-    path("register/admin/", users.AdminRegistrationView.as_view()),
-    path("register/profesor/", users.ProfesorRegistrationView.as_view()),
-    path("register/alumno/", users.AlumnoRegistrationView.as_view()),
+    path("admin/", users.AdminView.as_view()),
+    path("profesor/", profesores.ProfesoresView.as_view()),
+    path("alumno/", alumnos.AlumnosView.as_view()),
+    
+    # Listado de administradores
+    path('lista-admins/', users.AdminAll.as_view()),
+    # Lista de profesores
+    path('lista-profesores/', profesores.ProfesoresAll.as_view()),
+    
+    # Login
+    path("login/", auth.CustomAuthToken.as_view()),
+    # Logout
+    path("logout/", auth.Logout.as_view()),
     # Profile Data
-    path("profile/admin/", users.AdminProfileView.as_view()),
-    path("profile/profesor/", users.ProfesorProfileView.as_view()),
-    path("profile/alumno/", users.AlumnoProfileView.as_view()),
+    # path("profile/admin/", users.AdminProfileView.as_view()),
+    # path("profile/profesor/", users.ProfesorProfileView.as_view()),
+    # path("profile/alumno/", users.AlumnoProfileView.as_view()),
     # Edit Admin
     # path('admins-edit/', users.AdminsViewEdit.as_view())
 ]
