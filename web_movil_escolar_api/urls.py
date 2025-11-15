@@ -27,6 +27,8 @@ urlpatterns = [
     path('lista-admins/', users.AdminAll.as_view()),
     # Lista de profesores
     path('lista-profesores/', profesores.ProfesoresAll.as_view()),
+    # Lista de alumno
+    path('lista-alumnos/', alumnos.AlumnosAll.as_view()),
     
     # Login
     path("login/", auth.CustomAuthToken.as_view()),
