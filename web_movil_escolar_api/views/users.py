@@ -17,7 +17,7 @@ from web_movil_escolar_api.serializers import (
 
 
 class AdminAll(generics.CreateAPIView):
-    permission_classes = (permissions.IsAuthenticated)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
         admin = Administradores.objects.filter(user__is_active = 1).order_by("id")

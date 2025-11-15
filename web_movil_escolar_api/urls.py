@@ -19,9 +19,15 @@ from .views.bootstrap import VersionView
 urlpatterns = [
     # Create Admin
     # Endpoints de registro por rol
-    path("register/admin/", users.AdminView.as_view()),
-    path("register/profesor/", profesores.ProfesoresView.as_view()),
-    path("register/alumno/", alumnos.AlumnosView.as_view()),
+    path("admin/", users.AdminView.as_view()),
+    path("profesor/", profesores.ProfesoresView.as_view()),
+    path("alumno/", alumnos.AlumnosView.as_view()),
+    
+    # Listado de administradores
+    path('lista-admins/', users.AdminAll.as_view()),
+    # Lista de profesores
+    path('lista-profesores/', profesores.ProfesoresAll.as_view()),
+    
     # Login
     path("login/", auth.CustomAuthToken.as_view()),
     # Logout
