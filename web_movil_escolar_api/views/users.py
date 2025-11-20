@@ -93,10 +93,6 @@ class AdminView(generics.CreateAPIView):
     # Editar/actualizar los datos de un usuario
     @transaction.atomic
     def put(self, request, *args, **kwargs):
-        print("DEBUG: PUT request received")
-        print("DEBUG: Query params:", request.GET)
-        print("DEBUG: Request data:", request.data)
-        permission_classes = (permissions.IsAuthenticated,)
         # Se obtiene usuario a actualizar
         admin = get_object_or_404(Administradores, id=request.data["id"])
         admin.clave_admin = request.data["clave_admin"]
