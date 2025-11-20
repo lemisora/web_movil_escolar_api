@@ -1,6 +1,7 @@
 from django.contrib.auth.models import Group
 from django.db import transaction
 from django.db.models import *
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
@@ -18,6 +19,17 @@ class AlumnosAll(generics.CreateAPIView):
         return Response(lista, 200)
     
 class AlumnosView(generics.CreateAPIView):
+    # Obtener usuario por ID
+    # Verificar que el usuario esté autenticado
+    permission_classes = (permissions.IsAuthenticated,)
+
+    @transaction.atomic
+    def get(self, request, *args, **kwargs):
+        alumno = get_object_or_404(Alumnos, id=request.GET.get("id"))
+        alumno = AlumnoSerializer(alumno, many=False).data
+        return Response(alumno, 200)
+    
+    
     #Registrar nuevo usuario
     @transaction.atomic
     def post(self, request, *args, **kwargs):
@@ -54,6 +66,7 @@ class AlumnosView(generics.CreateAPIView):
             #Create a profile for the user
             alumno = Alumnos.objects.create(user=user,
                                             clave_alumno= request.data["clave_alumno"],
+                                            curp= request.data["curp"],
                                             rfc= request.data["rfc"].upper(),
                                             birthdate= request.data["birthdate"],
                                             edad= request.data["edad"],
@@ -62,3 +75,29 @@ class AlumnosView(generics.CreateAPIView):
             alumno.save()
 
             return Response({"Alumno creado con ID: ": alumno.id }, 201)
+
+    # Editar/actualizar los datos de un usuario
+    @transaction.atomic
+    def put(self, request, *args, **kwargs):
+        # Se obtiene usuario a actualizar
+        alumno = get_object_or_404(Alumnos, id=request.data["id"])
+        alumno.clave_alumno = request.data["clave_alumno"]
+        alumno.telefono = request.data["telefono"]
+        alumno.curp = request.data["curp"].upper()
+        alumno.rfc = request.data["rfc"].upper()
+        alumno.edad = request.data["edad"]
+        alumno.ocupacion = request.data["ocupacion"]
+        alumno.save()
+        # Actualizar los datos del usuario
+        user = alumno.user
+        user.first_name = request.data["first_name"]
+        user.last_name = request.data["last_name"]
+        user.save()
+    
+        return Response(
+        {
+            "message": "Alumno actualizado exitosamente",
+            "alumno": AlumnoSerializer(alumno).data,
+        },
+        200,
+    )
