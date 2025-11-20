@@ -62,6 +62,7 @@ class Alumnos(models.Model):
     )
     clave_alumno = models.CharField(max_length=255, null=True, blank=True)
     telefono = models.CharField(max_length=255, null=True, blank=True)
+    curp = models.CharField(max_length=255, null=True, blank=True)
     rfc = models.CharField(max_length=255, null=True, blank=True)
     birthdate = models.DateField(null=True, blank=True)
     edad = models.IntegerField(null=True, blank=True)
