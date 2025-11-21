@@ -25,6 +25,11 @@ class AdminSerializer(serializers.ModelSerializer):
 
 class ProfesorSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    # Define 'materias' explícitamente como JSONField para manejar la codificación/decodificación
+    # entre objetos Python y cadenas JSON en la base de datos.
+    # required=False permite que no sea enviado en todas las peticiones (ej. PATCH/PUT)
+    # allow_null=True permite que el campo sea nulo en la DB si es necesario.
+    materias = serializers.JSONField(required=False, allow_null=True)
 
     class Meta:
         model = Profesores

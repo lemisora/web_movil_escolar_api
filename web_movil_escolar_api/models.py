@@ -43,7 +43,7 @@ class Profesores(models.Model):
     birthdate = models.DateField(null=True, blank=True)
     cubiculo = models.CharField(max_length=255, null=True, blank=True)
     area_inv = models.CharField(max_length=255, null=True, blank=True)
-    materias = models.TextField(null=True, blank=True)
+    materias = models.JSONField(null=True, blank=True)
     creation = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     update = models.DateTimeField(null=True, blank=True)
 
@@ -54,6 +54,7 @@ class Profesores(models.Model):
             + " "
             + self.user.last_name
         )
+
 
 class Alumnos(models.Model):
     id = models.BigAutoField(primary_key=True)
