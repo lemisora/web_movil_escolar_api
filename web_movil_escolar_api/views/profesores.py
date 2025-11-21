@@ -20,11 +20,9 @@ class ProfesoresAll(generics.CreateAPIView):
         maestros = Profesores.objects.filter(user__is_active=1).order_by("id")
         lista = ProfesorSerializer(maestros, many=True).data
         for maestro in lista:
-            if isinstance(maestro, dict) and "materias" in maestro:
-                try:
-                    maestro["materias"] = json.loads(maestro["materias"])
-                except Exception:
-                    maestro["materias"] = []
+            # Si 'materias' es None (ej. en DB no hay datos), asegurar que sea una lista vacía para la respuesta.
+            if maestro.get("materias") is None:
+                maestro["materias"] = []
         return Response(lista, 200)
 
 
@@ -37,9 +35,8 @@ class ProfesoresView(generics.CreateAPIView):
     def get(self, request, *args, **kwargs):
         maestro = get_object_or_404(Profesores, id=request.GET.get("id"))
         maestro_data = ProfesorSerializer(maestro, many=False).data
-        try:
-            maestro_data["materias"] = json.loads(maestro_data["materias"])
-        except Exception:
+        # Si 'materias' es None (ej. en DB no hay datos), asegurar que sea una lista vacía para la respuesta.
+        if maestro_data.get("materias") is None:
             maestro_data["materias"] = []
         return Response(maestro_data, 200)
 
@@ -81,8 +78,85 @@ class ProfesoresView(generics.CreateAPIView):
                 rfc=request.data["rfc"].upper(),
                 cubiculo=request.data["cubiculo"],
                 area_inv=request.data["area_inv"],
-                materias=json.dumps(request.data["materias"]),
+                materias=request.data["materias"],
             )
             maestro.save()
             return Response({"maestro_created_id": maestro.id}, 201)
         return Response(user.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Editar/actualizar los datos de un usuario
+    @transaction.atomic
+    def put(self, request, *args, **kwargs):
+        maestro_id = request.data.get("id")
+        if not maestro_id:
+            return Response(
+                {"detail": "ID de maestro es requerido para la actualización."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        maestro_instance = get_object_or_404(Profesores, id=maestro_id)
+        user_instance = maestro_instance.user
+
+        # 1. Actualizar datos del usuario (first_name, last_name) si están presentes
+        user_update_data = {}
+        if "first_name" in request.data:
+            user_update_data["first_name"] = request.data["first_name"]
+        if "last_name" in request.data:
+            user_update_data["last_name"] = request.data["last_name"]
+
+        if user_update_data:  # Solo si hay datos para actualizar el usuario
+            user_serializer = UserSerializer(
+                user_instance, data=user_update_data, partial=True
+            )
+            if user_serializer.is_valid():
+                user_serializer.save()
+            else:
+                return Response(
+                    user_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+                )
+
+        # 2. Actualizar datos del profesor
+        profesor_update_data = {}
+        # Iterar sobre los campos esperados del profesor
+        profesor_fields = [
+            "clave_maestro",
+            "birthdate",
+            "telefono",
+            "cubiculo",
+            "area_inv",
+            "rfc",
+            "materias",
+        ]
+        for field in profesor_fields:
+            if field in request.data:
+                if field == "rfc":
+                    profesor_update_data[field] = request.data[field].upper()
+                else:
+                    # JSONField en el serializador manejará la codificación/decodificación para 'materias'
+                    # simplemente pasamos el valor de request.data directamente
+                    profesor_update_data[field] = request.data[field]
+
+        profesor_serializer = ProfesorSerializer(
+            maestro_instance, data=profesor_update_data, partial=True
+        )
+        if not profesor_serializer.is_valid():
+            return Response(
+                profesor_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        profesor_serializer.save()
+
+        # El serializador ProfesorSerializer ya se encarga de decodificar 'materias' para la salida
+        response_maestro_data = profesor_serializer.data
+        # Asegurar que 'materias' sea una lista vacía si es None en la respuesta
+        if response_maestro_data.get("materias") is None:
+            response_maestro_data["materias"] = []
+
+        return Response(
+            {
+                "message": "Maestro actualizado exitosamente",
+                "maestro": response_maestro_data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
