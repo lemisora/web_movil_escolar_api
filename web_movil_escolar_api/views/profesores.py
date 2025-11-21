@@ -160,3 +160,12 @@ class ProfesoresView(generics.CreateAPIView):
             status=status.HTTP_200_OK,
         )
 
+    # Eliminar maestro con delete (Borrar realmente)
+    @transaction.atomic
+    def delete(self, request, *args, **kwargs):
+        maestro = get_object_or_404(Profesores, id=request.GET.get("id"))
+        try:
+            maestro.user.delete()
+            return Response({"details":"Maestro eliminado"},200)
+        except Exception as e:
+            return Response({"details":"Algo pasó al eliminar"},400)
