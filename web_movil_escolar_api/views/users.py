@@ -27,10 +27,14 @@ class AdminAll(generics.CreateAPIView):
 
 
 class AdminView(generics.CreateAPIView):
+    # Permisos por método (sobrescribe el comportamiento default)
+    # Verifica que el usuario esté autenticado para las peticiones GET, PUT y DELETE
+    def get_permissions(self):
+        if self.request.method in ['GET', 'PUT', 'DELETE']:
+            return [permissions.IsAuthenticated()]
+        return []  # POST no requiere autenticación
+        
     # Obtener usuario por ID
-    # Verificar que el usuario esté autenticado
-    permission_classes = (permissions.IsAuthenticated,)
-
     @transaction.atomic
     def get(self, request, *args, **kwargs):
         admin = get_object_or_404(Administradores, id=request.GET.get("id"))

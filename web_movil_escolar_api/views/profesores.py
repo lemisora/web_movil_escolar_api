@@ -27,6 +27,13 @@ class ProfesoresAll(generics.CreateAPIView):
 
 
 class ProfesoresView(generics.CreateAPIView):
+    # Permisos por método (sobrescribe el comportamiento default)
+    # Verifica que el usuario esté autenticado para las peticiones GET, PUT y DELETE
+    def get_permissions(self):
+        if self.request.method in ['GET', 'PUT', 'DELETE']:
+            return [permissions.IsAuthenticated()]
+        return []  # POST no requiere autenticación
+    
     # Obtener usuario por ID
     # Verificar que el usuario esté autenticado
     permission_classes = (permissions.IsAuthenticated,)
