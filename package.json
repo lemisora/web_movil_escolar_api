@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "get-db": "^0.11.0"
+  }
+}
